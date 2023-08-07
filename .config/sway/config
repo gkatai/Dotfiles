@@ -1,0 +1,194 @@
+#######################################
+# Sway General Options
+#######################################
+set $mod Mod4
+set $term alacritty
+set $menu wofi --show drun --gtk-dark
+set $lock 'swaylock -f -c 28292b'
+
+#######################################
+# Output configuration
+#######################################
+output eDP-1 disable
+output HDMI-A-2 resolution 1920x1080 position 0,0 transform 90
+output DP-1 resolution 2560x1440 position 1080,240
+
+#######################################
+# Lock configuration
+#######################################
+exec swayidle -w \
+  timeout 360 $lock \
+  timeout 380 'swaymsg "output * power off"' \
+  resume 'swaymsg "output * power on"'
+
+#######################################
+# Input configuration
+#######################################
+input * {
+    xkb_layout "hu"
+}
+
+#######################################
+# Key bindings
+#######################################
+
+# Start a terminal
+bindsym $mod+Return exec $term
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Start your launcher
+bindsym $mod+d exec $menu
+
+# Lock screen
+bindsym $mod+l exec $lock
+
+# Drag floating windows by holding down $mod and left mouse button.
+# Resize them with right mouse button + $mod.
+# Despite the name, also works for non-floating windows.
+# Change normal to inverse to use left mouse button for resizing and right
+# mouse button for dragging.
+floating_modifier $mod normal
+
+# Reload the configuration file
+bindsym $mod+Shift+r reload
+
+# Move between windows
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move windows
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# move between workspaces
+bindsym $mod+Control+Left workspace prev
+bindsym $mod+Control+Right workspace next
+
+# pick color
+bindsym $mod+Shift+p exec grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | tail -n 1 | cut -d ' ' -f 4 | wl-copy 
+
+#######################################
+# Workspaces
+#######################################
+
+# Name workspaces
+set $ws1 "1: 1: Terminals I "
+set $ws2 "2: 2: Terminals II "
+set $ws3 "3: 3: IMs "
+set $ws4 "4: 4: Spotify "
+set $ws5 "5: 5: Firefox "
+set $ws6 "6: 6: Editor "
+set $ws7 "7: 7: VII"
+set $ws8 "8: 8: VIII"
+set $ws9 "9: 9: MPV "
+set $ws10 "10: 10: X"
+
+# Switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+odiaeresis workspace number $ws10
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+odiaeresis move container to workspace number $ws10
+
+# Move workspaces to output
+workspace $ws1 output HDMI-A-2
+workspace $ws2 output HDMI-A-2
+workspace $ws3 output HDMI-A-2
+workspace $ws4 output HDMI-A-2
+workspace $ws5 output DP-1
+workspace $ws6 output DP-1
+workspace $ws7 output DP-1
+workspace $ws8 output DP-1
+workspace $ws9 output DP-1
+
+#######################################
+# Layout
+#######################################
+
+bindsym $mod+h splith
+bindsym $mod+v splitv
+
+# Switch the current container between different layout styles
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+space floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+
+# Move focus to the parent container
+bindsym $mod+a focus parent
+
+#######################################
+# Border
+#######################################
+
+default_border none
+
+#######################################
+# Resize
+#######################################
+mode "resize" {
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+#######################################
+# System mode
+#######################################
+bindsym $mod+Shift+e exec ~/Scripts/powermenu.sh
+
+#######################################
+# Style
+#######################################
+gaps inner 10
+
+#######################################
+# Bar
+#######################################
+exec_always ~/.config/waybar/waybar.sh
+
+#######################################
+# Inhibit idle
+#######################################
+for_window [class=".*"] inhibit_idle fullscreen
+for_window [app_id=".*"] inhibit_idle fullscreen
+
+exec mako
+exec gammastep
